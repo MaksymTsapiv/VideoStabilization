@@ -13,9 +13,25 @@ if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release)
 endif ()
 
+
 find_package( OpenCV REQUIRED )
-include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+# Create test examples and link with our library
+function(addTestExample target_name_of_example)
+	# example of usage: addTestExample(targetName src/main.cpp src/my_utils.h)
+	add_executable(${ARGV})
+	target_include_directories("${target_name_of_example}" PRIVATE ${OpenCV_INCLUDE_DIRS})
+	target_link_libraries("${target_name_of_example}" ${OpenCV_LIBS})
+endfunction()
 
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+
+addTestExample(motionInpaintingTest src/main.cpp)
+addTestExample(ECCTest src/transformECCexample.cpp)
+
+#include_directories( ${OpenCV_INCLUDE_DIRS} )
+#
+#add_executable(${PROJECT_NAME} src/main.cpp)
+#add_exacutable(${Example} src/transformECCexample.cpp)
+#
+#target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+#target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
