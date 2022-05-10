@@ -15,10 +15,15 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    std::string output_path = "output.mp4";
+    double output_fps;
+
     std::string video_path {argv[1]};
 
     // VideoFileSource
     cv::Ptr<vs::VideoFileSource> source_ptr = cv::makePtr<vs::VideoFileSource>(video_path);
+
+    output_fps = source_ptr->fps();
 
     vs::TwoPassStabilizer two_pass_stab;
 
@@ -45,8 +50,42 @@ int main(int argc, char** argv) {
     inpainters->setRadius(3 /* ??? */);
     two_pass_stab.setInpainter(inpainters);
 
-    // Iterate through frames and do stabilization
-    // TODO: implement
 
+
+    cv::Ptr<vs::IFrameSource> stabilizedFrames;
+
+    stabilizedFrames.reset(dynamic_cast<vs::IFrameSource*>(&two_pass_stab));
+
+    cv::VideoWriter writer;
+    cv::Mat stabilizedFrame;
+    int nframes = 0;
+    char file_name[100];
+
+    int a = 5;
+
+    // for each stabilized frame
+    while ( !(stabilizedFrame = stabilizedFrames->nextFrame()).empty() ) {
+        nframes++;
+
+        // init writer (once) and save stabilized frame
+        if (!writer.isOpened())
+            writer.open(output_path, cv::VideoWriter::fourcc('X','V','I','D'), output_fps, stabilizedFrame.size());
+        writer << stabilizedFrame;
+
+        // show stabilized frame
+        imshow("stabilizedFrame", stabilizedFrame);
+        sprintf(file_name, "%0.3d.tif", nframes);
+
+        imwrite(file_name, stabilizedFrame);
+
+        char key = static_cast<char>(cv::waitKey(3));
+        if (key == 27) {
+            std::cout << std::endl;
+            break;
+        }
+    }
+
+
+    stabilizedFrames.release();
     return 0;
 }
