@@ -4,7 +4,6 @@
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/videostab/inpainting.hpp>
 #include <opencv2/videostab/stabilizer.hpp>
-#include <opencv2/videostab/optical_flow.hpp>
 #include <opencv2/videostab/motion_stabilizing.hpp>
 
 namespace vs = cv::videostab;
@@ -26,6 +25,7 @@ int main(int argc, char** argv) {
     output_fps = source_ptr->fps();
 
     vs::TwoPassStabilizer two_pass_stab;
+    two_pass_stab.setFrameSource(source_ptr);
 
     // Choose and configure motion stabilizer
     vs::GaussianMotionFilter motion_filter{3 /* ??? */};
@@ -34,9 +34,7 @@ int main(int argc, char** argv) {
 
     // Do we also need to set motion estimator?
 
-    two_pass_stab.setFrameSource(source_ptr);
-
-
+    // Configure inpainters
     vs::InpaintingPipeline *inpainters = new vs::InpaintingPipeline();
 
     cv::Ptr<vs::ConsistentMosaicInpainter> mosaic_inp = cv::makePtr<vs::ConsistentMosaicInpainter>();
@@ -52,19 +50,13 @@ int main(int argc, char** argv) {
 
 
 
-    cv::Ptr<vs::IFrameSource> stabilizedFrames;
-
-    stabilizedFrames.reset(dynamic_cast<vs::IFrameSource*>(&two_pass_stab));
-
     cv::VideoWriter writer;
     cv::Mat stabilizedFrame;
     int nframes = 0;
     char file_name[100];
 
-    int a = 5;
-
     // for each stabilized frame
-    while ( !(stabilizedFrame = stabilizedFrames->nextFrame()).empty() ) {
+    while ( !(stabilizedFrame = two_pass_stab.nextFrame()).empty() ) {
         nframes++;
 
         // init writer (once) and save stabilized frame
@@ -73,10 +65,10 @@ int main(int argc, char** argv) {
         writer << stabilizedFrame;
 
         // show stabilized frame
-        imshow("stabilizedFrame", stabilizedFrame);
+        cv::imshow("stabilizedFrame", stabilizedFrame);
         sprintf(file_name, "%0.3d.tif", nframes);
 
-        imwrite(file_name, stabilizedFrame);
+        cv::imwrite(file_name, stabilizedFrame);
 
         char key = static_cast<char>(cv::waitKey(3));
         if (key == 27) {
@@ -85,7 +77,5 @@ int main(int argc, char** argv) {
         }
     }
 
-
-    stabilizedFrames.release();
     return 0;
 }
