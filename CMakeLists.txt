@@ -28,7 +28,7 @@ endfunction()
 
 addTestExample(motionInpaintingTest src/main.cpp)
 addTestExample(ECCTest src/transformECCexample.cpp)
-addTestExample(OurECC src/ourECC.cpp src/ourECCTest.cpp include/ourECC.h)
+addTestExample(OurECC src/ourECC.cpp src/ourECCTest.cpp)
 
 #include_directories( ${OpenCV_INCLUDE_DIRS} )
 #
