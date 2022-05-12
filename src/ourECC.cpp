@@ -6,14 +6,16 @@
 #include <vector>
 #include <cstddef>
 
+#define DEBUG
+
 cv::Mat get_normalized_reference_intensities(const cv::Mat &templateImage,
-                                             std::vector<cv::KeyPoint> keypoints) {
-    cv::Mat intens{static_cast<int>(keypoints.size()), 1, CV_64F};
+                                             std::vector<cv::Point2d> keypoints) {
+    cv::Mat intens(static_cast<int>(keypoints.size()), 1, CV_32F);
     for (size_t n_keypoint = 0; n_keypoint < keypoints.size(); ++n_keypoint) {
-        intens.at<double>(n_keypoint, 0) = templateImage.at<double>(keypoints[n_keypoint].pt);
+        intens.at<double>(n_keypoint, 0) = templateImage.at<double>(keypoints[n_keypoint]);
     }
     intens -= cv::mean(intens);
-    intens /= cv::norm(intens);
+    intens = intens / cv::norm(intens);
     return intens;
 }
 
@@ -108,9 +110,12 @@ double ourFindTransformECC(const cv::InputArray &templateImage, const cv::InputA
         target_area.push_back(keypoint.pt);
     }
 
-    // calculate normalized reference points
-    cv::Mat r_normalized_int = get_normalized_reference_intensities(templateImage.getMat(), keypoints);
+#ifdef DEBUG
+    std::cout << "Number of points of interest: " << target_area.size() << std::endl;
+#endif
 
+    // calculate normalized reference points
+    cv::Mat r_normalized_int = get_normalized_reference_intensities(templateImage.getMat(), target_area);
 
 
     // gradient of warped image
