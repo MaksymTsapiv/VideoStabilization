@@ -21,12 +21,14 @@ function(addTestExample target_name_of_example)
 	# example of usage: addTestExample(targetName src/main.cpp src/my_utils.h)
 	add_executable(${ARGV})
 	target_include_directories("${target_name_of_example}" PRIVATE ${OpenCV_INCLUDE_DIRS})
+	target_include_directories("${target_name_of_example}" PRIVATE include)
 	target_link_libraries("${target_name_of_example}" ${OpenCV_LIBS})
 endfunction()
 
 
 addTestExample(motionInpaintingTest src/main.cpp)
 addTestExample(ECCTest src/transformECCexample.cpp)
+addTestExample(OurECC src/ourECC.cpp src/ourECCTest.cpp include/ourECC.h)
 
 #include_directories( ${OpenCV_INCLUDE_DIRS} )
 #
