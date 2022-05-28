@@ -25,10 +25,10 @@ int main() {
 
     // Affine transformation
     // initialize p
-    double data[6] = {1.0, 0.0, 1.0, 0.0, 0.0, 0.0};
+    double data[6] = {1.000001, 0.0, 0.0, 1.0, 0.0, 0.0};
     cv::Mat params = cv::Mat(6, 1, CV_64FC1, &data);
 
     ourFindTransformECC(mat1, mat2, params);
 
-
+    std::cout << params << std::endl;
 }
