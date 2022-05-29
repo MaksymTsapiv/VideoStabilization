@@ -13,6 +13,7 @@ Scalar getMSSIM( const Mat& I1, const Mat& I2);
 
 int main(int argc, char *argv[])
 {
+    double mean_psnr = 0;
     if (argc != 5)
     {
         cout << "Not enough parameters" << endl;
@@ -64,13 +65,14 @@ int main(int argc, char *argv[])
         captUndTst >> frameUnderTest;
         if (frameReference.empty() || frameUnderTest.empty())
         {
-            cout << " < < <  GGs!  > > > ";
+            cout << " < < <  GGs!  > > > \n";
             break;
         }
         ++frameNum;
         cout << "Frame: " << frameNum << "# ";
         psnrV = getPSNR(frameReference,frameUnderTest);
         cout << setiosflags(ios::fixed) << setprecision(3) << psnrV << "dB";
+        mean_psnr += psnrV;
         if (psnrV < psnrTriggerValue && psnrV)
         {
             mssimV = getMSSIM(frameReference, frameUnderTest);
@@ -85,6 +87,7 @@ int main(int argc, char *argv[])
         char c = (char)waitKey(delay);
         if (c == 27) break;
     }
+    std::cout << "mean psnr value = " << mean_psnr / 100 << "dB";
     return 0;
 }
 
