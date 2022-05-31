@@ -27,5 +27,6 @@ endfunction()
 
 
 addTestExample(vidstab src/main.cpp src/adapted_optical_flow.hpp)
+addTestExample(psnr src/psnr.cpp)
 addTestExample(ECCTest src/transformECCexample.cpp)
 addTestExample(OurECC src/ourECC.cpp src/ourECCTest.cpp)

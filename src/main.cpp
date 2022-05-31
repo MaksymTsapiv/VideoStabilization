@@ -44,7 +44,8 @@ int main(int argc, char** argv) {
 
 
     // Wobble suppressor
-    cv::Ptr<vs::MoreAccurateMotionWobbleSuppressorBase> wobble_sup = cv::makePtr<vs::MoreAccurateMotionWobbleSuppressor>();
+    cv::Ptr<vs::MoreAccurateMotionWobbleSuppressorBase> wobble_sup =
+                        cv::makePtr<vs::MoreAccurateMotionWobbleSuppressor>();
     wobble_sup = cv::makePtr<vs::MoreAccurateMotionWobbleSuppressorGpu>();
     wobble_sup->setPeriod(30 /* ??? */);
     two_pass_stab.setWobbleSuppressor(wobble_sup);
