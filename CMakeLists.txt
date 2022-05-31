@@ -26,14 +26,6 @@ function(addTestExample target_name_of_example)
 endfunction()
 
 
-addTestExample(motionInpaintingTest src/main.cpp)
+addTestExample(vidstab src/main.cpp src/adapted_optical_flow.hpp)
 addTestExample(ECCTest src/transformECCexample.cpp)
 addTestExample(OurECC src/ourECC.cpp src/ourECCTest.cpp)
-
-#include_directories( ${OpenCV_INCLUDE_DIRS} )
-#
-#add_executable(${PROJECT_NAME} src/main.cpp)
-#add_exacutable(${Example} src/transformECCexample.cpp)
-#
-#target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
-#target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
