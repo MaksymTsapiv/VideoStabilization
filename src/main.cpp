@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
     int nframes = 0;
     char file_name[100];
 
-    // Iterate through frameso, stabilize them and write to new video file
+    // Iterate through frames, stabilize them and write to new video file
     while ( !(stabilizedFrame = two_pass_stab.nextFrame()).empty() ) {
         nframes++;
 
