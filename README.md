@@ -23,6 +23,8 @@ Third and fourth executables are related to ECC alignment algorithm. They are `E
 ### Results
 Presentation, result description and implementation are explained in this [YouTube video](https://youtu.be/tfT4fq6IhhI) (accessible only from **@ucu.edu.ua email**)
 
+A detailed explanations on how it works and principles under the hood can by found in our [Report](Report.pdf)
+
 You can also find original video, stabilized without inpainting, stabilized with inpainting videos and stabilized by online stabilizer videos in **videos** folder. Names are self-explanatory.
 
 ### Authors
