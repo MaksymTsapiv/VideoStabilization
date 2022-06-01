@@ -14,16 +14,16 @@ Scalar getMSSIM( const Mat& I1, const Mat& I2);
 int main(int argc, char *argv[])
 {
     double mean_psnr = 0;
-    if (argc != 5)
+    if (argc != 4)
     {
         cout << "Not enough parameters" << endl;
         return -1;
     }
     stringstream conv;
     const string sourceReference = argv[1], sourceCompareWith = argv[2];
-    int psnrTriggerValue, delay;
-    conv << argv[3] << endl << argv[4];       // put in the strings
-    conv >> psnrTriggerValue >> delay;       // take out the numbers
+    int delay;
+    conv << argv[3];       // put in the strings
+    conv >> delay;       // take out the numbers
     int frameNum = -1;          // Frame counter
     VideoCapture captRefrnc(sourceReference), captUndTst(sourceCompareWith);
     if (!captRefrnc.isOpened())
@@ -54,38 +54,35 @@ int main(int argc, char *argv[])
     moveWindow(WIN_UT, refS.width, 0);         //1500, 2
     cout << "Reference frame resolution: Width=" << refS.width << "  Height=" << refS.height
          << " of nr#: " << captRefrnc.get(CAP_PROP_FRAME_COUNT) << endl;
-    cout << "PSNR trigger value " << setiosflags(ios::fixed) << setprecision(3)
-         << psnrTriggerValue << endl;
-    Mat frameReference, frameUnderTest;
+
     double psnrV;
     Scalar mssimV;
+
+    Mat frameUnderTest;
+    Mat prevFrameUnderTest;
+
+    captUndTst >> prevFrameUnderTest;
+
     for(;;) //Show the image captured in the window and repeat
     {
-        captRefrnc >> frameReference;
         captUndTst >> frameUnderTest;
-        if (frameReference.empty() || frameUnderTest.empty())
+        if (frameUnderTest.empty())
         {
             cout << " < < <  GGs!  > > > \n";
             break;
         }
         ++frameNum;
         cout << "Frame: " << frameNum << "# ";
-        psnrV = getPSNR(frameReference,frameUnderTest);
-        cout << setiosflags(ios::fixed) << setprecision(3) << psnrV << "dB";
+        psnrV = getPSNR(prevFrameUnderTest, frameUnderTest);
+        cout << setiosflags(ios::fixed) << setprecision(30) << psnrV << "dB";
         mean_psnr += psnrV;
-        if (psnrV < psnrTriggerValue && psnrV)
-        {
-            mssimV = getMSSIM(frameReference, frameUnderTest);
-            cout << " MSSIM: "
-                 << " R " << setiosflags(ios::fixed) << setprecision(2) << mssimV.val[2] * 100 << "%"
-                 << " G " << setiosflags(ios::fixed) << setprecision(2) << mssimV.val[1] * 100 << "%"
-                 << " B " << setiosflags(ios::fixed) << setprecision(2) << mssimV.val[0] * 100 << "%";
-        }
+
         cout << endl;
-        imshow(WIN_RF, frameReference);
-        imshow(WIN_UT, frameUnderTest);
-        char c = (char)waitKey(delay);
-        if (c == 27) break;
+//        imshow(WIN_UT, frameUnderTest);
+//        char c = (char)waitKey(delay);
+//        if (c == 27) break;
+
+        frameUnderTest.copyTo(prevFrameUnderTest);
     }
     std::cout << "mean psnr value = " << mean_psnr / 100 << "dB";
     return 0;
